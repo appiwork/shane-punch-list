@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shane — Punch List</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#faf8f2;
+    --paper-line:#e4ded0;
+    --ink:#1c2b45;
+    --ink-soft:#4d5b74;
+    --navy:#1c2b45;
+    --orange:#e8590c;
+    --orange-soft:#fdece0;
+    --green:#2f7a4d;
+    --green-soft:#e7f3ea;
+    --amber:#a8710a;
+    --amber-soft:#fbf0dc;
+    --red:#b3261e;
+    --red-soft:#fbe9e7;
+    --line:#d9d2bf;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 27px, var(--paper-line) 27px, var(--paper-line) 28px),
+      var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding: 28px 18px 80px;
+  }
+
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .masthead{
+    border-bottom:3px solid var(--ink);
+    padding-bottom:16px;
+    margin-bottom:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .masthead h1{
+    font-family:'Archivo Black', sans-serif;
+    font-size:28px;
+    letter-spacing:0.5px;
+    margin:0 0 4px;
+    text-transform:uppercase;
+  }
+  .masthead .sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    letter-spacing:0.5px;
+  }
+  .whoami{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:4px;
+  }
+  .whoami label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--ink-soft);
+  }
+  .who-buttons{
+    display:flex;
+    gap:6px;
+  }
+  .who-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    padding:7px 14px;
+    border:1.5px solid var(--ink);
+    background:#fff;
+    color:var(--ink);
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .who-btn:hover{background:var(--orange-soft);border-color:var(--orange);}
+  .who-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+
+  .toolbar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:16px;
+    justify-content:flex-end;
+  }
+  .toolbar label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--ink-soft);
+  }
+  .toolbar select{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    padding:6px 10px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+  }
+
+  .loc-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--navy);
+    background:var(--orange-soft);
+    border:1px solid var(--orange);
+    border-radius:2px;
+    padding:2px 8px;
+    margin-bottom:6px;
+  }
+
+  .stats{
+    display:flex;
+    gap:10px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    padding:6px 10px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:#fff;
+    color:var(--ink-soft);
+  }
+  .stat b{color:var(--ink);font-size:13px;}
+
+  .group{margin-bottom:26px;}
+  .group-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .group-head .loc{
+    font-family:'Archivo Black', sans-serif;
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+  }
+  .group-head .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .group-head .rule{flex:1;border-bottom:1px dashed var(--line);}
+
+  .row{
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:4px solid var(--ink);
+    border-radius:3px;
+    margin-bottom:10px;
+    padding:14px 16px;
+    position:relative;
+  }
+  .row.done{border-left-color:var(--green);}
+  .row-top{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .row-title{
+    font-weight:600;
+    font-size:15px;
+    margin:0 0 4px;
+  }
+  .row-desc{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    margin:0;
+  }
+  .priority{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    padding:3px 8px;
+    border-radius:10px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .priority.high{background:var(--red-soft);color:var(--red);}
+  .priority.medium{background:var(--amber-soft);color:var(--amber);}
+  .priority.low{background:var(--green-soft);color:var(--green);}
+
+  .checks{
+    display:flex;
+    gap:18px;
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+    flex-wrap:wrap;
+  }
+  .check{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:500;
+    user-select:none;
+  }
+  .check input{
+    width:18px;height:18px;
+    accent-color:var(--orange);
+    cursor:pointer;
+  }
+  .check.verify input{accent-color:var(--navy);}
+  .check span.label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+  }
+  .check.checked span.label{color:var(--ink);}
+  .check.disabled{cursor:not-allowed;opacity:0.5;}
+  .check.disabled input{cursor:not-allowed;}
+
+  .comment-toggle{
+    margin-left:auto;
+    background:none;
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+
+  .comments{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .comments.open{display:block;}
+  .comment-item{
+    padding:8px 0;
+    border-bottom:1px solid var(--paper-line);
+    font-size:13px;
+    line-height:1.5;
+  }
+  .comment-item:last-child{border-bottom:none;}
+  .comment-item.system{color:var(--ink-soft);font-style:italic;}
+  .comment-item.system .comment-meta{color:var(--ink-soft);}
+  .comment-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-bottom:2px;
+    text-transform:uppercase;
+    letter-spacing:0.3px;
+  }
+  .comment-meta b{color:var(--navy);}
+  .no-comments{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-style:italic;
+    padding:4px 0;
+  }
+  .comment-add{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+  }
+  .comment-add textarea{
+    flex:1;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13px;
+    padding:8px 10px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+    resize:vertical;
+    min-height:36px;
+  }
+  .comment-add button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    border-radius:3px;
+    padding:0 16px;
+    cursor:pointer;
+  }
+  .comment-add button:hover{background:var(--orange);}
+
+  .photos{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .photos.open{display:block;}
+  .photo-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .photo-thumb{
+    width:72px;height:72px;
+    border-radius:4px;
+    border:1px solid var(--line);
+    object-fit:cover;
+    cursor:pointer;
+    background:var(--paper-line);
+  }
+  .photo-thumb-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+  }
+  .photo-thumb-cap{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    color:var(--ink-soft);
+    max-width:72px;
+    text-align:center;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .no-photos{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-style:italic;
+    padding:2px 0 10px;
+  }
+  .photo-add-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background:#fff;
+    border:1.5px dashed var(--ink);
+    border-radius:3px;
+    padding:7px 14px;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .photo-add-btn:hover{background:var(--orange-soft);border-color:var(--orange);color:var(--orange);}
+
+  .lightbox-backdrop{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(28,43,69,0.75);
+    align-items:center;justify-content:center;
+    padding:24px;
+    z-index:60;
+    cursor:zoom-out;
+  }
+  .lightbox-backdrop.open{display:flex;}
+  .lightbox-backdrop img{
+    max-width:100%;
+    max-height:85vh;
+    border-radius:4px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+  }
+  .lightbox-cap{
+    position:absolute;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:#fff;
+    background:rgba(0,0,0,0.5);
+    padding:6px 12px;
+    border-radius:20px;
+  }
+
+  .edit-row-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background:none;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:4px 10px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    flex-shrink:0;
+    height:fit-content;
+  }
+  .edit-row-btn:hover{border-color:var(--orange);color:var(--orange);}
+
+  .edit-fields{width:100%;}
+  .edit-fields .field{margin-bottom:10px;}
+  .edit-fields label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+    margin-bottom:3px;
+  }
+  .edit-fields input, .edit-fields textarea, .edit-fields select{
+    width:100%;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13.5px;
+    padding:7px 9px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+  }
+  .edit-fields textarea{min-height:60px;resize:vertical;}
+  .edit-actions{
+    display:flex;
+    gap:8px;
+    justify-content:flex-end;
+  }
+  .edit-actions button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    padding:7px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    border:none;
+  }
+
+  .add-item-bar{
+    display:flex;
+    justify-content:center;
+    margin:30px 0 10px;
+  }
+  .add-item-bar button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+    background:#fff;
+    border:1.5px dashed var(--ink);
+    border-radius:3px;
+    padding:10px 20px;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .add-item-bar button:hover{background:var(--orange-soft);border-color:var(--orange);color:var(--orange);}
+
+  .modal-backdrop{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(28,43,69,0.45);
+    align-items:center;justify-content:center;
+    padding:20px;
+    z-index:50;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:#fff;
+    border-radius:6px;
+    padding:22px;
+    width:100%;
+    max-width:420px;
+    max-height:90vh;
+    overflow-y:auto;
+  }
+  .modal h2{
+    font-family:'Archivo Black', sans-serif;
+    font-size:16px;
+    text-transform:uppercase;
+    margin:0 0 16px;
+  }
+  .field{margin-bottom:12px;}
+  .field label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .field input, .field textarea, .field select{
+    width:100%;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:13.5px;
+    padding:8px 10px;
+    border:1.5px solid var(--line);
+    border-radius:3px;
+  }
+  .field textarea{min-height:60px;resize:vertical;}
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:16px;
+  }
+  .modal-actions button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    padding:9px 16px;
+    border-radius:3px;
+    cursor:pointer;
+    border:none;
+  }
+  .btn-cancel{background:var(--paper-line);color:var(--ink-soft);}
+  .btn-save{background:var(--orange);color:#fff;}
+
+  .status-line{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:24px;
+  }
+
+  @media (max-width:480px){
+    .masthead{flex-direction:column;align-items:flex-start;}
+    .whoami{align-items:flex-start;}
+    .whoami input{text-align:left;width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <h1>Shane — Punch List</h1>
+      <div class="sub">Builder sign-off &amp; verification tracker</div>
+    </div>
+    <div class="whoami">
+      <label>Signing as</label>
+      <div class="who-buttons" id="whoButtons">
+        <button class="who-btn" data-name="Shane">Shane</button>
+        <button class="who-btn" data-name="Isao">Isao</button>
+        <button class="who-btn" data-name="Zoe">Zoe</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="toolbar">
+    <label for="sortBy">Sort by</label>
+    <select id="sortBy">
+      <option value="location">Location</option>
+      <option value="priority">Priority</option>
+      <option value="title">Title (A–Z)</option>
+      <option value="status">Status</option>
+    </select>
+  </div>
+
+  <div id="rowsFlat"></div>
+
+  <div class="add-item-bar">
+    <button id="addItemBtn">+ Add item</button>
+  </div>
+
+  <div class="status-line" id="statusLine">Loading…</div>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <h2>Add checklist item</h2>
+    <div class="field">
+      <label>Location</label>
+      <input id="f-location" type="text" placeholder="e.g. Staircase" list="location-list">
+      <datalist id="location-list"></datalist>
+    </div>
+    <div class="field">
+      <label>Title</label>
+      <input id="f-title" type="text" placeholder="Short title">
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="f-description" placeholder="Details for the builder"></textarea>
+    </div>
+    <div class="field">
+      <label>Priority</label>
+      <select id="f-priority">
+        <option value="High">High</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelAdd">Cancel</button>
+      <button class="btn-save" id="saveAdd">Add item</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="pwBackdrop">
+  <div class="modal">
+    <h2 id="pwTitle">Enter passcode</h2>
+    <div class="field">
+      <label>Passcode</label>
+      <input id="pwInput" type="password" inputmode="numeric" placeholder="••••">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="pwCancel">Cancel</button>
+      <button class="btn-save" id="pwSubmit">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-backdrop" id="lightbox">
+  <img id="lightboxImg" src="" alt="Photo">
+  <div class="lightbox-cap" id="lightboxCap"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAzq2uGJKUTcw8DAM56XkEb38icI5AvVzQ",
+  authDomain: "shane-punch-list.firebaseapp.com",
+  projectId: "shane-punch-list",
+  storageBucket: "shane-punch-list.firebasestorage.app",
+  messagingSenderId: "927506742827",
+  appId: "1:927506742827:web:bd850b12e845fc38d0746e"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const mainDocRef = doc(db, "checklist", "main");
+
+const SEED_ROWS = [
+  {id:"r1", location:"Kitchen balcony", title:"Joint batten", description:"All joint batten on the ceiling are sagging due to the quality. Please replace it to proper one that will not warp or sag.", priority:"Medium"},
+  {id:"r2", location:"Staircase", title:"Sticking out nails", description:"On treads, there are a lot of nails sticking out and they are dangerous. Please hammer them down so that they are no more sticking out.", priority:"High"},
+  {id:"r3", location:"Staircase", title:"Skirting board unfinished", description:"Skirting boards around the last tread at upstairs looks unfinished. Please tidy up.", priority:"Medium"},
+  {id:"r4", location:"Staircase", title:"Low clearance", description:"Towards the bottom of the staircase, more head clearance is required. Isao keeps hitting his head.", priority:"High"},
+  {id:"r5", location:"Upstairs corridor", title:"Skirting board gap", description:"A skirting board is not flushed on the wall. T section between the staircase and the corridor closer to Yumi's room.", priority:"Low"},
+  {id:"r6", location:"Upstairs windows", title:"Gap between windows and brick walls", description:"Miki and Ellie's room windows are having gaps still. Please close the gaps asap for possum prevention.", priority:"High"},
+  {id:"r7", location:"Under ensuite", title:"Big hole under ensuite", description:"Please close the hole under ensuite for the possum prevention.", priority:"High"}
+];
+
+let data = null;
+const editingRows = new Set();
+
+function uid(){
+  return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+}
+
+function normalizeData(raw){
+  const d = raw || {};
+  if(!d.rows) d.rows = SEED_ROWS;
+  if(!d.status) d.status = {};
+  if(!d.comments) d.comments = {};
+  if(!d.photos) d.photos = {};
+  return d;
+}
+
+// Loads the doc once, seeding it if it doesn't exist yet, then keeps
+// `data` in sync in real time via onSnapshot (so all three of you see
+// each other's changes without refreshing).
+async function loadData(){
+  const snap = await getDoc(mainDocRef);
+  if(snap.exists()){
+    data = normalizeData(snap.data());
+  }else{
+    data = normalizeData(null);
+    await saveData();
+  }
+  onSnapshot(mainDocRef, (snap) => {
+    if(!snap.exists()) return;
+    data = normalizeData(snap.data());
+    render();
+  });
+}
+
+async function saveData(){
+  try{
+    await setDoc(mainDocRef, data);
+  }catch(e){
+    console.error("Save failed", e);
+    document.getElementById("statusLine").textContent = "Save failed — check connection";
+  }
+}
+
+const PASSCODE = "987";
+let currentUser = null;
+
+// Identity is per-device only, so this stays in localStorage rather
+// than Firestore — no need to sync who's "signed in" across devices.
+function loadCurrentUser(){
+  currentUser = localStorage.getItem("signed-in-as");
+  updateWhoButtons();
+}
+
+function saveCurrentUser(name){
+  currentUser = name;
+  localStorage.setItem("signed-in-as", name);
+  updateWhoButtons();
+  if(!canVerify()) editingRows.clear();
+  if(data) render();
+}
+
+function updateWhoButtons(){
+  document.querySelectorAll(".who-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-name") === currentUser);
+  });
+}
+
+function fmtTime(ts){
+  const d = new Date(ts);
+  return d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}) + ' ' +
+         d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+}
+
+function getStatus(id){
+  return data.status[id] || {builderComplete:false, verified:false};
+}
+
+function canVerify(){
+  return currentUser === "Isao" || currentUser === "Zoe";
+}
+
+const PRIORITY_ORDER = {High:0, Medium:1, Low:2};
+
+function sortRows(rows, sortBy){
+  const sorted = rows.slice();
+  if(sortBy === "location"){
+    sorted.sort((a,b) => a.location.localeCompare(b.location) || a.title.localeCompare(b.title));
+  }else if(sortBy === "priority"){
+    sorted.sort((a,b) => (PRIORITY_ORDER[a.priority] ?? 9) - (PRIORITY_ORDER[b.priority] ?? 9));
+  }else if(sortBy === "title"){
+    sorted.sort((a,b) => a.title.localeCompare(b.title));
+  }else if(sortBy === "status"){
+    sorted.sort((a,b) => {
+      const sa = getStatus(a.id), sb = getStatus(b.id);
+      const scoreA = (sa.verified?2:0) + (sa.builderComplete?1:0);
+      const scoreB = (sb.verified?2:0) + (sb.builderComplete?1:0);
+      return scoreA - scoreB;
+    });
+  }
+  return sorted;
+}
+
+function render(){
+  // stats
+  const total = data.rows.length;
+  const builderDone = data.rows.filter(r => getStatus(r.id).builderComplete).length;
+  const verified = data.rows.filter(r => getStatus(r.id).verified).length;
+  document.getElementById("stats").innerHTML = `
+    <div class="stat"><b>${total}</b> items</div>
+    <div class="stat"><b>${builderDone}</b> builder complete</div>
+    <div class="stat"><b>${verified}</b> verified</div>
+  `;
+
+  // datalist for locations (still useful when adding new items)
+  const locs = [...new Set(data.rows.map(r => r.location))];
+  const dl = document.getElementById("location-list");
+  dl.innerHTML = locs.map(l => `<option value="${escapeHtml(l)}">`).join("");
+
+  const sortBy = document.getElementById("sortBy").value;
+  const rows = sortRows(data.rows, sortBy);
+
+  const container = document.getElementById("rowsFlat");
+  container.innerHTML = "";
+
+  rows.forEach(item => {
+    const st = getStatus(item.id);
+    const comments = (data.comments[item.id] || []).slice().sort((a,b) => b.ts - a.ts);
+
+    const rowEl = document.createElement("div");
+    rowEl.className = "row" + (st.verified ? " done" : "");
+    rowEl.innerHTML = `
+      <div class="row-top">
+        ${editingRows.has(item.id) ? `
+        <div class="edit-fields">
+          <div class="field">
+            <label>Location</label>
+            <input type="text" data-edit="location" data-edit-id="${item.id}" value="${escapeHtml(item.location)}">
+          </div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" data-edit="title" data-edit-id="${item.id}" value="${escapeHtml(item.title)}">
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea data-edit="description" data-edit-id="${item.id}">${escapeHtml(item.description)}</textarea>
+          </div>
+          <div class="field">
+            <label>Priority</label>
+            <select data-edit="priority" data-edit-id="${item.id}">
+              <option value="High" ${item.priority==="High"?"selected":""}>High</option>
+              <option value="Medium" ${item.priority==="Medium"?"selected":""}>Medium</option>
+              <option value="Low" ${item.priority==="Low"?"selected":""}>Low</option>
+            </select>
+          </div>
+          <div class="edit-actions">
+            <button class="btn-cancel" data-edit-cancel="${item.id}">Cancel</button>
+            <button class="btn-save" data-edit-save="${item.id}">Save</button>
+          </div>
+        </div>
+        ` : `
+        <div>
+          <span class="loc-tag">${escapeHtml(item.location)}</span>
+          <p class="row-title">${escapeHtml(item.title)}</p>
+          <p class="row-desc">${escapeHtml(item.description)}</p>
+        </div>
+        <span class="priority ${item.priority.toLowerCase()}">${escapeHtml(item.priority)}</span>
+        ${canVerify() ? `<button class="edit-row-btn" data-edit-open="${item.id}">Edit</button>` : ``}
+        `}
+      </div>
+      <div class="checks">
+        <label class="check builder ${st.builderComplete ? 'checked' : ''}">
+          <input type="checkbox" data-id="${item.id}" data-field="builderComplete" ${st.builderComplete ? 'checked' : ''}>
+          <span class="label">Builder Complete</span>
+        </label>
+        <label class="check verify ${st.verified ? 'checked' : ''} ${canVerify() ? '' : 'disabled'}" title="${canVerify() ? '' : 'Only Isao or Zoe can verify'}">
+          <input type="checkbox" data-id="${item.id}" data-field="verified" ${st.verified ? 'checked' : ''} ${canVerify() ? '' : 'disabled'}>
+          <span class="label">Verified</span>
+        </label>
+        <button class="comment-toggle" data-id="${item.id}">Comments (${comments.length})</button>
+        <button class="comment-toggle" data-photos-toggle="${item.id}">Photos (${(data.photos[item.id]||[]).length})</button>
+      </div>
+      <div class="photos" data-photos-for="${item.id}">
+        <div class="photo-grid" data-photo-grid="${item.id}"></div>
+        <input type="file" accept="image/*" capture="environment" style="display:none" data-photo-input="${item.id}">
+        <button class="photo-add-btn" data-photo-add="${item.id}">+ Add photo</button>
+      </div>
+      <div class="comments" data-comments-for="${item.id}">
+        ${comments.length ? comments.map(c => `
+          <div class="comment-item ${c.system ? 'system' : ''}">
+            <div class="comment-meta"><b>${escapeHtml(c.author)}</b> — ${fmtTime(c.ts)}</div>
+            <div>${c.system ? '☑ ' : ''}${escapeHtml(c.text)}</div>
+          </div>
+        `).join("") : '<div class="no-comments">No comments yet.</div>'}
+        <div class="comment-add">
+          <textarea placeholder="Add a comment…" data-comment-input="${item.id}"></textarea>
+          <button data-comment-submit="${item.id}">Post</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(rowEl);
+  });
+
+  attachHandlers();
+  renderAllPhotoGrids(rows);
+  document.getElementById("statusLine").textContent = "Synced";
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
+}
+
+function attachHandlers(){
+  document.querySelectorAll('input[type=checkbox][data-id]').forEach(cb => {
+    cb.addEventListener("change", async (e) => {
+      const id = e.target.getAttribute("data-id");
+      const field = e.target.getAttribute("data-field");
+      if(field === "verified" && !canVerify()){
+        alert("Only Isao or Zoe can toggle Verified.");
+        e.target.checked = !e.target.checked;
+        return;
+      }
+      if(!data.status[id]) data.status[id] = {builderComplete:false, verified:false};
+      data.status[id][field] = e.target.checked;
+      const fieldLabel = field === "builderComplete" ? "Builder Complete" : "Verified";
+      const actionText = `${e.target.checked ? "checked" : "unchecked"} ${fieldLabel}`;
+      if(!data.comments[id]) data.comments[id] = [];
+      data.comments[id].push({
+        author: currentUser || "Unsigned user",
+        ts: Date.now(),
+        text: actionText,
+        system: true
+      });
+      document.getElementById("statusLine").textContent = "Saving…";
+      await saveData();
+      render();
+    });
+  });
+
+  document.querySelectorAll(".comment-toggle").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.target.getAttribute("data-id");
+      const panel = document.querySelector(`.comments[data-comments-for="${id}"]`);
+      panel.classList.toggle("open");
+    });
+  });
+
+  document.querySelectorAll("[data-comment-submit]").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.getAttribute("data-comment-submit");
+      const textarea = document.querySelector(`[data-comment-input="${id}"]`);
+      const text = textarea.value.trim();
+      if(!text) return;
+      if(!currentUser){
+        alert("Please sign in as Shane, Isao, or Zoe first (top right).");
+        return;
+      }
+      const author = currentUser;
+      if(!data.comments[id]) data.comments[id] = [];
+      data.comments[id].push({author, ts: Date.now(), text});
+      document.getElementById("statusLine").textContent = "Saving…";
+      await saveData();
+      render();
+      const panel = document.querySelector(`.comments[data-comments-for="${id}"]`);
+      if(panel) panel.classList.add("open");
+    });
+  });
+
+  document.querySelectorAll("[data-photos-toggle]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.getAttribute("data-photos-toggle");
+      const panel = document.querySelector(`.photos[data-photos-for="${id}"]`);
+      panel.classList.toggle("open");
+    });
+  });
+
+  document.querySelectorAll("[data-photo-add]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.getAttribute("data-photo-add");
+      if(!currentUser){
+        alert("Please sign in as Shane, Isao, or Zoe first (top right).");
+        return;
+      }
+      document.querySelector(`[data-photo-input="${id}"]`).click();
+    });
+  });
+
+  document.querySelectorAll("[data-photo-input]").forEach(input => {
+    input.addEventListener("change", async (e) => {
+      const id = e.target.getAttribute("data-photo-input");
+      const file = e.target.files[0];
+      if(!file) return;
+      document.getElementById("statusLine").textContent = "Compressing photo…";
+      try{
+        const dataUrl = await compressImage(file);
+        const photoId = uid();
+        document.getElementById("statusLine").textContent = "Uploading photo…";
+        await setDoc(doc(db, "photoImages", photoId), {dataUrl, author: currentUser, ts: Date.now()});
+        imageCache[photoId] = dataUrl;
+        if(!data.photos[id]) data.photos[id] = [];
+        data.photos[id].push({id: photoId, author: currentUser, ts: Date.now()});
+        document.getElementById("statusLine").textContent = "Saving…";
+        await saveData();
+        render();
+        const panel = document.querySelector(`.photos[data-photos-for="${id}"]`);
+        if(panel) panel.classList.add("open");
+      }catch(err){
+        console.error(err);
+        alert("Sorry, that photo couldn't be uploaded.");
+        document.getElementById("statusLine").textContent = "Synced";
+      }
+      e.target.value = "";
+    });
+  });
+
+  document.querySelectorAll("[data-edit-open]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.getAttribute("data-edit-open");
+      editingRows.add(id);
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-edit-cancel]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const id = e.currentTarget.getAttribute("data-edit-cancel");
+      editingRows.delete(id);
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-edit-save]").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.currentTarget.getAttribute("data-edit-save");
+      if(!canVerify()){
+        alert("Only Isao or Zoe can edit items.");
+        return;
+      }
+      const location = document.querySelector(`[data-edit="location"][data-edit-id="${id}"]`).value.trim();
+      const title = document.querySelector(`[data-edit="title"][data-edit-id="${id}"]`).value.trim();
+      const description = document.querySelector(`[data-edit="description"][data-edit-id="${id}"]`).value.trim();
+      const priority = document.querySelector(`[data-edit="priority"][data-edit-id="${id}"]`).value;
+      if(!location || !title){
+        alert("Location and Title can't be empty.");
+        return;
+      }
+      const row = data.rows.find(r => r.id === id);
+      if(row){
+        row.location = location;
+        row.title = title;
+        row.description = description;
+        row.priority = priority;
+      }
+      editingRows.delete(id);
+      document.getElementById("statusLine").textContent = "Saving…";
+      await saveData();
+      render();
+    });
+  });
+}
+
+// ---- Photos: compression, storage cache, grid rendering, lightbox ----
+const imageCache = {};
+
+// Firestore documents cap out at 1MB, so photos need to land well under
+// that once base64-encoded. Start at a modest size/quality and step down
+// further if the result is still too big.
+const FIRESTORE_SAFE_BYTES = 700000; // leaves headroom under the 1MB doc limit
+
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("read failed"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("decode failed"));
+      img.onload = () => {
+        function attempt(maxDim, quality){
+          let w = img.width, h = img.height;
+          if(w > maxDim || h > maxDim){
+            if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
+            else{ w = Math.round(w * maxDim / h); h = maxDim; }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          return canvas.toDataURL("image/jpeg", quality);
+        }
+        let dataUrl = attempt(900, 0.7);
+        if(dataUrl.length > FIRESTORE_SAFE_BYTES) dataUrl = attempt(700, 0.55);
+        if(dataUrl.length > FIRESTORE_SAFE_BYTES) dataUrl = attempt(500, 0.4);
+        if(dataUrl.length > FIRESTORE_SAFE_BYTES){
+          reject(new Error("Photo is too large even after compression."));
+          return;
+        }
+        resolve(dataUrl);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function renderAllPhotoGrids(rows){
+  for(const item of rows){
+    const list = data.photos[item.id] || [];
+    const grid = document.querySelector(`[data-photo-grid="${item.id}"]`);
+    if(!grid) continue;
+    if(list.length === 0){
+      grid.innerHTML = '<div class="no-photos">No photos yet.</div>';
+      continue;
+    }
+    grid.innerHTML = "";
+    const sorted = list.slice().sort((a,b) => b.ts - a.ts);
+    sorted.forEach(p => {
+      const wrap = document.createElement("div");
+      wrap.className = "photo-thumb-wrap";
+      const img = document.createElement("img");
+      img.className = "photo-thumb";
+      img.alt = `Photo by ${p.author}`;
+      img.src = imageCache[p.id] || "";
+      const cap = document.createElement("div");
+      cap.className = "photo-thumb-cap";
+      cap.textContent = p.author;
+      wrap.appendChild(img);
+      wrap.appendChild(cap);
+      grid.appendChild(wrap);
+      img.addEventListener("click", () => {
+        if(img.src) openLightbox(img.src, `${p.author} — ${fmtTime(p.ts)}`);
+      });
+      if(!imageCache[p.id]){
+        getDoc(doc(db, "photoImages", p.id)).then(snap => {
+          if(!snap.exists()) return;
+          const url = snap.data().dataUrl;
+          imageCache[p.id] = url;
+          img.src = url;
+        }).catch(err => console.error("Photo load failed", err));
+      }
+    });
+  }
+}
+
+function openLightbox(src, caption){
+  document.getElementById("lightboxImg").src = src;
+  document.getElementById("lightboxCap").textContent = caption;
+  document.getElementById("lightbox").classList.add("open");
+}
+document.getElementById("lightbox").addEventListener("click", () => {
+  document.getElementById("lightbox").classList.remove("open");
+});
+
+// Add item modal
+const backdrop = document.getElementById("modalBackdrop");
+document.getElementById("addItemBtn").addEventListener("click", () => {
+  document.getElementById("f-location").value = "";
+  document.getElementById("f-title").value = "";
+  document.getElementById("f-description").value = "";
+  document.getElementById("f-priority").value = "Medium";
+  backdrop.classList.add("open");
+});
+document.getElementById("cancelAdd").addEventListener("click", () => backdrop.classList.remove("open"));
+backdrop.addEventListener("click", (e) => { if(e.target === backdrop) backdrop.classList.remove("open"); });
+
+document.getElementById("saveAdd").addEventListener("click", async () => {
+  const location = document.getElementById("f-location").value.trim();
+  const title = document.getElementById("f-title").value.trim();
+  const description = document.getElementById("f-description").value.trim();
+  const priority = document.getElementById("f-priority").value;
+  if(!location || !title){
+    alert("Please fill in at least Location and Title.");
+    return;
+  }
+  data.rows.push({id: uid(), location, title, description, priority});
+  backdrop.classList.remove("open");
+  document.getElementById("statusLine").textContent = "Saving…";
+  await saveData();
+  render();
+});
+
+// Identity selector
+const pwBackdrop = document.getElementById("pwBackdrop");
+const pwInput = document.getElementById("pwInput");
+const pwTitle = document.getElementById("pwTitle");
+let pendingUser = null;
+
+document.querySelectorAll(".who-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const name = btn.getAttribute("data-name");
+    if(name === "Shane"){
+      saveCurrentUser(name);
+      return;
+    }
+    pendingUser = name;
+    pwTitle.textContent = `Passcode for ${name}`;
+    pwInput.value = "";
+    pwBackdrop.classList.add("open");
+    setTimeout(() => pwInput.focus(), 50);
+  });
+});
+
+document.getElementById("pwCancel").addEventListener("click", () => {
+  pwBackdrop.classList.remove("open");
+  pendingUser = null;
+});
+pwBackdrop.addEventListener("click", (e) => { if(e.target === pwBackdrop){ pwBackdrop.classList.remove("open"); pendingUser = null; } });
+
+function submitPasscode(){
+  if(pwInput.value === PASSCODE){
+    saveCurrentUser(pendingUser);
+    pwBackdrop.classList.remove("open");
+    pendingUser = null;
+  }else{
+    alert("Wrong passcode.");
+    pwInput.value = "";
+    pwInput.focus();
+  }
+}
+document.getElementById("pwSubmit").addEventListener("click", submitPasscode);
+pwInput.addEventListener("keydown", (e) => { if(e.key === "Enter") submitPasscode(); });
+
+document.getElementById("sortBy").addEventListener("change", render);
+
+(async function init(){
+  await loadData();
+  await loadCurrentUser();
+  render();
+})();
+</script>
+</body>
+</html>
