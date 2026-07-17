@@ -270,9 +270,15 @@
 
   .row-top{
     display:flex;
-    justify-content:space-between;
     gap:12px;
     align-items:flex-start;
+  }
+  .row-meta{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:8px;
+    margin-top:8px;
   }
   .row-top-text{
     flex:1 1 auto;
@@ -1077,10 +1083,14 @@ function render(){
           <p class="row-title">${escapeHtml(item.title)}</p>
           <p class="row-desc">${escapeHtml(item.description)}</p>
         </div>
-        <span class="priority ${item.priority.toLowerCase()}">${escapeHtml(item.priority)}</span>
-        ${canVerify() ? `<button class="edit-row-btn" data-edit-open="${item.id}">Edit</button>` : ``}
         `}
       </div>
+      ${editingRows.has(item.id) ? `` : `
+      <div class="row-meta">
+        <span class="priority ${item.priority.toLowerCase()}">${escapeHtml(item.priority)}</span>
+        ${canVerify() ? `<button class="edit-row-btn" data-edit-open="${item.id}">Edit</button>` : ``}
+      </div>
+      `}
       <div class="checks">
         <label class="check builder ${st.builderComplete ? 'checked' : ''}">
           <input type="checkbox" data-id="${item.id}" data-field="builderComplete" ${st.builderComplete ? 'checked' : ''}>
