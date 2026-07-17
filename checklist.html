@@ -21,6 +21,8 @@
     --amber-soft:#fbf0dc;
     --red:#b3261e;
     --red-soft:#fbe9e7;
+    --blue-soft:#e2ecfb;
+    --blue-strong:#3b6fc4;
     --line:#d9d2bf;
   }
 
@@ -92,6 +94,19 @@
   }
   .who-btn:hover{background:var(--orange-soft);border-color:var(--orange);}
   .who-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .who-badge{
+    display:inline-block;
+    background:var(--orange);
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    min-width:16px;
+    height:16px;
+    line-height:16px;
+    border-radius:8px;
+    padding:0 4px;
+    margin-left:4px;
+  }
 
   .toolbar{
     display:flex;
@@ -179,12 +194,89 @@
     padding:14px 16px;
     position:relative;
   }
-  .row.done{border-left-color:var(--green);}
+  .row{position:relative;}
+  .row.row-builder{background:var(--blue-soft);border-left-color:var(--blue-strong);}
+  .row.row-verified{background:var(--green-soft);border-left-color:var(--green);}
+
+  .unread-badge{
+    position:absolute;
+    top:-8px;
+    right:-8px;
+    background:var(--orange);
+    color:#fff;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    font-weight:600;
+    min-width:20px;
+    height:20px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0 5px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .signin-prompt{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    padding:60px 20px;
+    border:1.5px dashed var(--line);
+    border-radius:6px;
+  }
+
+  .stat-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    padding:6px 10px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:#fff;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .stat-btn b{color:var(--ink);font-size:13px;}
+  .stat-btn.active{border-color:var(--ink);border-width:1.5px;}
+  .stat-btn.builder{background:var(--blue-soft);border-color:var(--blue-strong);}
+  .stat-btn.verified{background:var(--green-soft);border-color:var(--green);}
+  .card-thumb{
+    width:56px;
+    height:56px;
+    flex-shrink:0;
+    border-radius:4px;
+    overflow:hidden;
+    background:var(--paper-line);
+    border:1px solid var(--line);
+  }
+  .card-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    cursor:pointer;
+  }
+  .card-thumb.placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    color:var(--ink-soft);
+    opacity:0.5;
+  }
+
   .row-top{
     display:flex;
     justify-content:space-between;
     gap:12px;
     align-items:flex-start;
+  }
+  .row-top-text{
+    flex:1 1 auto;
+    min-width:0;
   }
   .row-title{
     font-weight:600;
@@ -196,6 +288,8 @@
     color:var(--ink-soft);
     line-height:1.5;
     margin:0;
+    word-wrap:break-word;
+    overflow-wrap:break-word;
   }
   .priority{
     font-family:'IBM Plex Mono', monospace;
@@ -245,7 +339,7 @@
   .check.disabled{cursor:not-allowed;opacity:0.5;}
   .check.disabled input{cursor:not-allowed;}
 
-  .comment-toggle{
+  .comment-toggle, .photo-toggle-btn{
     margin-left:auto;
     background:none;
     border:none;
@@ -375,34 +469,86 @@
     color:var(--ink);
   }
   .photo-add-btn:hover{background:var(--orange-soft);border-color:var(--orange);color:var(--orange);}
+  .photo-add-row{display:flex;gap:8px;flex-wrap:wrap;}
 
   .lightbox-backdrop{
     display:none;
     position:fixed;inset:0;
-    background:rgba(28,43,69,0.75);
+    background:rgba(28,43,69,0.85);
     align-items:center;justify-content:center;
-    padding:24px;
+    padding:16px;
     z-index:60;
-    cursor:zoom-out;
   }
   .lightbox-backdrop.open{display:flex;}
-  .lightbox-backdrop img{
+  .lightbox-inner{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
     max-width:100%;
-    max-height:85vh;
+    max-height:100%;
+  }
+  .lightbox-inner img{
+    max-width:100%;
+    max-height:75vh;
     border-radius:4px;
     box-shadow:0 10px 40px rgba(0,0,0,0.4);
+    background:#111;
+  }
+  .lightbox-close{
+    position:absolute;
+    top:-40px;
+    right:0;
+    background:none;
+    border:none;
+    color:#fff;
+    font-size:32px;
+    line-height:1;
+    cursor:pointer;
+    padding:4px 8px;
+  }
+  .lightbox-nav{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    background:rgba(0,0,0,0.4);
+    color:#fff;
+    border:none;
+    font-size:28px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    cursor:pointer;
+    line-height:1;
+  }
+  .lightbox-nav:hover{background:rgba(0,0,0,0.65);}
+  .lightbox-nav.prev{left:-8px;}
+  .lightbox-nav.next{right:-8px;}
+  .lightbox-footer{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:14px;
   }
   .lightbox-cap{
-    position:absolute;
-    bottom:30px;
-    left:50%;
-    transform:translateX(-50%);
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
     color:#fff;
     background:rgba(0,0,0,0.5);
     padding:6px 12px;
     border-radius:20px;
+  }
+  .lightbox-delete{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background:var(--red);
+    color:#fff;
+    border:none;
+    border-radius:20px;
+    padding:6px 14px;
+    cursor:pointer;
   }
 
   .edit-row-btn{
@@ -638,14 +784,22 @@
 </div>
 
 <div class="lightbox-backdrop" id="lightbox">
-  <img id="lightboxImg" src="" alt="Photo">
-  <div class="lightbox-cap" id="lightboxCap"></div>
+  <div class="lightbox-inner" id="lightboxInner">
+    <button class="lightbox-close" id="lightboxClose" title="Close">&times;</button>
+    <button class="lightbox-nav prev" id="lightboxPrev" title="Previous">&#8249;</button>
+    <img id="lightboxImg" src="" alt="Photo">
+    <button class="lightbox-nav next" id="lightboxNext" title="Next">&#8250;</button>
+    <div class="lightbox-footer">
+      <div class="lightbox-cap" id="lightboxCap"></div>
+      <button class="lightbox-delete" id="lightboxDelete" style="display:none;">Delete photo</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import {
-  getFirestore, doc, getDoc, setDoc, onSnapshot
+  getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -673,6 +827,11 @@ const SEED_ROWS = [
 
 let data = null;
 const editingRows = new Set();
+const openComments = new Set();
+const openPhotos = new Set();
+let activeFilter = "all"; // "all" | "builderComplete" | "verified"
+let readState = {}; // { rowId: lastSeenTsForCurrentUser }
+let readStateUnsub = null;
 
 function uid(){
   return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
@@ -722,6 +881,7 @@ let currentUser = null;
 function loadCurrentUser(){
   currentUser = localStorage.getItem("signed-in-as");
   updateWhoButtons();
+  if(currentUser) subscribeReadState(currentUser);
 }
 
 function saveCurrentUser(name){
@@ -729,7 +889,53 @@ function saveCurrentUser(name){
   localStorage.setItem("signed-in-as", name);
   updateWhoButtons();
   if(!canVerify()) editingRows.clear();
+  activeFilter = "all";
+  subscribeReadState(name);
   if(data) render();
+}
+
+// Read-state (which items/comments each person has already seen) is
+// synced via Firestore so badges stay consistent across a person's
+// own devices, not just the one they set it on.
+function subscribeReadState(user){
+  if(readStateUnsub) readStateUnsub();
+  readState = {};
+  if(!user){ readStateUnsub = null; return; }
+  readStateUnsub = onSnapshot(doc(db, "readState", user), (snap) => {
+    readState = snap.exists() ? (snap.data() || {}) : {};
+    if(data) render();
+  });
+}
+
+function markRowRead(rowId){
+  if(!currentUser) return;
+  readState[rowId] = Date.now();
+  setDoc(doc(db, "readState", currentUser), readState, {merge: true}).catch(e => console.error(e));
+  render();
+}
+
+function unreadCountFor(rowId){
+  if(!currentUser) return 0;
+  const lastSeen = readState[rowId] || 0;
+  const comments = data.comments[rowId] || [];
+  return comments.filter(c => c.ts > lastSeen && c.author !== currentUser).length;
+}
+
+function totalUnread(){
+  if(!currentUser || !data) return 0;
+  return data.rows.reduce((sum, r) => sum + unreadCountFor(r.id), 0);
+}
+
+function updateWhoBadge(){
+  const total = totalUnread();
+  document.querySelectorAll(".who-btn").forEach(btn => {
+    const name = btn.getAttribute("data-name");
+    if(name === currentUser && total > 0){
+      btn.innerHTML = `${name} <span class="who-badge">${total}</span>`;
+    }else{
+      btn.innerHTML = name;
+    }
+  });
 }
 
 function updateWhoButtons(){
@@ -774,15 +980,38 @@ function sortRows(rows, sortBy){
 }
 
 function render(){
-  // stats
+  const statsEl = document.getElementById("stats");
+  const toolbarEl = document.querySelector(".toolbar");
+  const addBarEl = document.querySelector(".add-item-bar");
+  const container = document.getElementById("rowsFlat");
+
+  if(!currentUser){
+    statsEl.innerHTML = "";
+    toolbarEl.style.display = "none";
+    addBarEl.style.display = "none";
+    container.innerHTML = `<div class="signin-prompt">Select Shane, Isao, or Zoe above to view the checklist.</div>`;
+    document.getElementById("statusLine").textContent = "Signed out";
+    updateWhoBadge();
+    return;
+  }
+  toolbarEl.style.display = "";
+  addBarEl.style.display = "";
+
+  // stats — also act as filter buttons
   const total = data.rows.length;
   const builderDone = data.rows.filter(r => getStatus(r.id).builderComplete).length;
   const verified = data.rows.filter(r => getStatus(r.id).verified).length;
-  document.getElementById("stats").innerHTML = `
-    <div class="stat"><b>${total}</b> items</div>
-    <div class="stat"><b>${builderDone}</b> builder complete</div>
-    <div class="stat"><b>${verified}</b> verified</div>
+  statsEl.innerHTML = `
+    <button class="stat-btn ${activeFilter==='all' ? 'active' : ''}" data-filter="all"><b>${total}</b> items</button>
+    <button class="stat-btn builder ${activeFilter==='builderComplete' ? 'active' : ''}" data-filter="builderComplete"><b>${builderDone}</b> builder complete</button>
+    <button class="stat-btn verified ${activeFilter==='verified' ? 'active' : ''}" data-filter="verified"><b>${verified}</b> verified</button>
   `;
+  statsEl.querySelectorAll(".stat-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeFilter = btn.getAttribute("data-filter");
+      render();
+    });
+  });
 
   // datalist for locations (still useful when adding new items)
   const locs = [...new Set(data.rows.map(r => r.location))];
@@ -790,18 +1019,27 @@ function render(){
   dl.innerHTML = locs.map(l => `<option value="${escapeHtml(l)}">`).join("");
 
   const sortBy = document.getElementById("sortBy").value;
-  const rows = sortRows(data.rows, sortBy);
+  let rows = sortRows(data.rows, sortBy);
+  if(activeFilter === "builderComplete") rows = rows.filter(r => getStatus(r.id).builderComplete);
+  else if(activeFilter === "verified") rows = rows.filter(r => getStatus(r.id).verified);
 
-  const container = document.getElementById("rowsFlat");
   container.innerHTML = "";
 
   rows.forEach(item => {
     const st = getStatus(item.id);
     const comments = (data.comments[item.id] || []).slice().sort((a,b) => b.ts - a.ts);
+    const unread = unreadCountFor(item.id);
+
+    let statusClass = "";
+    if(st.verified) statusClass = "row-verified";
+    else if(st.builderComplete) statusClass = "row-builder";
 
     const rowEl = document.createElement("div");
-    rowEl.className = "row" + (st.verified ? " done" : "");
+    rowEl.className = `row ${statusClass}`.trim();
+    const hasPhoto = (data.photos[item.id]||[]).length > 0;
+
     rowEl.innerHTML = `
+      ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ``}
       <div class="row-top">
         ${editingRows.has(item.id) ? `
         <div class="edit-fields">
@@ -831,7 +1069,10 @@ function render(){
           </div>
         </div>
         ` : `
-        <div>
+        <div class="card-thumb ${hasPhoto ? '' : 'placeholder'}">
+          ${hasPhoto ? `<img data-cover-for="${item.id}" alt="${escapeHtml(item.title)}">` : '📷'}
+        </div>
+        <div class="row-top-text">
           <span class="loc-tag">${escapeHtml(item.location)}</span>
           <p class="row-title">${escapeHtml(item.title)}</p>
           <p class="row-desc">${escapeHtml(item.description)}</p>
@@ -850,18 +1091,22 @@ function render(){
           <span class="label">Verified</span>
         </label>
         <button class="comment-toggle" data-id="${item.id}">Comments (${comments.length})</button>
-        <button class="comment-toggle" data-photos-toggle="${item.id}">Photos (${(data.photos[item.id]||[]).length})</button>
+        <button class="photo-toggle-btn" data-photos-toggle="${item.id}">Photos (${(data.photos[item.id]||[]).length})</button>
       </div>
-      <div class="photos" data-photos-for="${item.id}">
+      <div class="photos ${openPhotos.has(item.id) ? 'open' : ''}" data-photos-for="${item.id}">
         <div class="photo-grid" data-photo-grid="${item.id}"></div>
-        <input type="file" accept="image/*" capture="environment" style="display:none" data-photo-input="${item.id}">
-        <button class="photo-add-btn" data-photo-add="${item.id}">+ Add photo</button>
+        <input type="file" accept="image/*" capture="environment" style="display:none" data-photo-input-camera="${item.id}">
+        <input type="file" accept="image/*" style="display:none" data-photo-input-gallery="${item.id}">
+        <div class="photo-add-row">
+          <button class="photo-add-btn" data-photo-add="${item.id}" data-source="camera">📷 Camera</button>
+          <button class="photo-add-btn" data-photo-add="${item.id}" data-source="gallery">🖼️ Gallery</button>
+        </div>
       </div>
-      <div class="comments" data-comments-for="${item.id}">
+      <div class="comments ${openComments.has(item.id) ? 'open' : ''}" data-comments-for="${item.id}">
         ${comments.length ? comments.map(c => `
           <div class="comment-item ${c.system ? 'system' : ''}">
             <div class="comment-meta"><b>${escapeHtml(c.author)}</b> — ${fmtTime(c.ts)}</div>
-            <div>${c.system ? '☑ ' : ''}${escapeHtml(c.text)}</div>
+            <div>${systemIcon(c)}${escapeHtml(c.text)}</div>
           </div>
         `).join("") : '<div class="no-comments">No comments yet.</div>'}
         <div class="comment-add">
@@ -875,7 +1120,15 @@ function render(){
 
   attachHandlers();
   renderAllPhotoGrids(rows);
+  updateWhoBadge();
   document.getElementById("statusLine").textContent = "Synced";
+}
+
+function systemIcon(c){
+  if(!c.system) return "";
+  if(c.text.includes("photo")) return "📷 ";
+  if(c.text.includes("created")) return "🆕 ";
+  return "☑ ";
 }
 
 function escapeHtml(str){
@@ -913,9 +1166,10 @@ function attachHandlers(){
 
   document.querySelectorAll(".comment-toggle").forEach(btn => {
     btn.addEventListener("click", (e) => {
-      const id = e.target.getAttribute("data-id");
-      const panel = document.querySelector(`.comments[data-comments-for="${id}"]`);
-      panel.classList.toggle("open");
+      const id = e.currentTarget.getAttribute("data-id");
+      const opening = !openComments.has(id);
+      if(opening){ openComments.add(id); markRowRead(id); }
+      else{ openComments.delete(id); render(); }
     });
   });
 
@@ -932,36 +1186,38 @@ function attachHandlers(){
       const author = currentUser;
       if(!data.comments[id]) data.comments[id] = [];
       data.comments[id].push({author, ts: Date.now(), text});
+      openComments.add(id);
       document.getElementById("statusLine").textContent = "Saving…";
       await saveData();
-      render();
-      const panel = document.querySelector(`.comments[data-comments-for="${id}"]`);
-      if(panel) panel.classList.add("open");
+      markRowRead(id);
     });
   });
 
   document.querySelectorAll("[data-photos-toggle]").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.getAttribute("data-photos-toggle");
-      const panel = document.querySelector(`.photos[data-photos-for="${id}"]`);
-      panel.classList.toggle("open");
+      const opening = !openPhotos.has(id);
+      if(opening){ openPhotos.add(id); markRowRead(id); }
+      else{ openPhotos.delete(id); render(); }
     });
   });
 
   document.querySelectorAll("[data-photo-add]").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const id = e.currentTarget.getAttribute("data-photo-add");
+      const source = e.currentTarget.getAttribute("data-source");
       if(!currentUser){
         alert("Please sign in as Shane, Isao, or Zoe first (top right).");
         return;
       }
-      document.querySelector(`[data-photo-input="${id}"]`).click();
+      const selector = source === "gallery" ? `[data-photo-input-gallery="${id}"]` : `[data-photo-input-camera="${id}"]`;
+      document.querySelector(selector).click();
     });
   });
 
-  document.querySelectorAll("[data-photo-input]").forEach(input => {
+  document.querySelectorAll("[data-photo-input-camera], [data-photo-input-gallery]").forEach(input => {
     input.addEventListener("change", async (e) => {
-      const id = e.target.getAttribute("data-photo-input");
+      const id = e.target.getAttribute("data-photo-input-camera") || e.target.getAttribute("data-photo-input-gallery");
       const file = e.target.files[0];
       if(!file) return;
       document.getElementById("statusLine").textContent = "Compressing photo…";
@@ -973,11 +1229,12 @@ function attachHandlers(){
         imageCache[photoId] = dataUrl;
         if(!data.photos[id]) data.photos[id] = [];
         data.photos[id].push({id: photoId, author: currentUser, ts: Date.now()});
+        if(!data.comments[id]) data.comments[id] = [];
+        data.comments[id].push({author: currentUser, ts: Date.now(), text: "added a photo", system: true});
+        openPhotos.add(id);
         document.getElementById("statusLine").textContent = "Saving…";
         await saveData();
-        render();
-        const panel = document.querySelector(`.photos[data-photos-for="${id}"]`);
-        if(panel) panel.classList.add("open");
+        markRowRead(id);
       }catch(err){
         console.error(err);
         alert("Sorry, that photo couldn't be uploaded.");
@@ -1078,6 +1335,19 @@ function compressImage(file){
 async function renderAllPhotoGrids(rows){
   for(const item of rows){
     const list = data.photos[item.id] || [];
+
+    // Cover/feature image — first photo ever uploaded for this item.
+    const coverImg = document.querySelector(`[data-cover-for="${item.id}"]`);
+    if(coverImg && list.length){
+      const cover = list[0];
+      loadPhotoInto(cover.id, coverImg);
+      coverImg.addEventListener("click", () => {
+        const sorted = list.slice().sort((a,b) => b.ts - a.ts);
+        const idx = sorted.findIndex(p => p.id === cover.id);
+        openLightboxFor(item.id, idx >= 0 ? idx : 0);
+      });
+    }
+
     const grid = document.querySelector(`[data-photo-grid="${item.id}"]`);
     if(!grid) continue;
     if(list.length === 0){
@@ -1086,7 +1356,7 @@ async function renderAllPhotoGrids(rows){
     }
     grid.innerHTML = "";
     const sorted = list.slice().sort((a,b) => b.ts - a.ts);
-    sorted.forEach(p => {
+    sorted.forEach((p, idx) => {
       const wrap = document.createElement("div");
       wrap.className = "photo-thumb-wrap";
       const img = document.createElement("img");
@@ -1099,29 +1369,102 @@ async function renderAllPhotoGrids(rows){
       wrap.appendChild(img);
       wrap.appendChild(cap);
       grid.appendChild(wrap);
-      img.addEventListener("click", () => {
-        if(img.src) openLightbox(img.src, `${p.author} — ${fmtTime(p.ts)}`);
-      });
-      if(!imageCache[p.id]){
-        getDoc(doc(db, "photoImages", p.id)).then(snap => {
-          if(!snap.exists()) return;
-          const url = snap.data().dataUrl;
-          imageCache[p.id] = url;
-          img.src = url;
-        }).catch(err => console.error("Photo load failed", err));
-      }
+      img.addEventListener("click", () => openLightboxFor(item.id, idx));
+      loadPhotoInto(p.id, img);
     });
   }
 }
 
-function openLightbox(src, caption){
-  document.getElementById("lightboxImg").src = src;
-  document.getElementById("lightboxCap").textContent = caption;
+function loadPhotoInto(photoId, imgEl){
+  if(imageCache[photoId]){
+    imgEl.src = imageCache[photoId];
+    return;
+  }
+  getDoc(doc(db, "photoImages", photoId)).then(snap => {
+    if(!snap.exists()) return;
+    const url = snap.data().dataUrl;
+    imageCache[photoId] = url;
+    imgEl.src = url;
+  }).catch(err => console.error("Photo load failed", err));
+}
+
+// ---- Lightbox gallery: next/prev, close, delete (Isao/Zoe only) ----
+let lightboxRowId = null;
+let lightboxPhotos = [];
+let lightboxIndex = 0;
+
+function openLightboxFor(rowId, index){
+  const list = (data.photos[rowId] || []).slice().sort((a,b) => b.ts - a.ts);
+  if(list.length === 0) return;
+  lightboxRowId = rowId;
+  lightboxPhotos = list;
+  lightboxIndex = ((index % list.length) + list.length) % list.length;
+  showLightboxPhoto();
   document.getElementById("lightbox").classList.add("open");
 }
-document.getElementById("lightbox").addEventListener("click", () => {
+
+function showLightboxPhoto(){
+  const p = lightboxPhotos[lightboxIndex];
+  if(!p) return;
+  const img = document.getElementById("lightboxImg");
+  img.src = imageCache[p.id] || "";
+  loadPhotoInto(p.id, img);
+  document.getElementById("lightboxCap").textContent =
+    `${p.author} — ${fmtTime(p.ts)}${lightboxPhotos.length > 1 ? ` (${lightboxIndex + 1}/${lightboxPhotos.length})` : ''}`;
+  document.getElementById("lightboxDelete").style.display = canVerify() ? "" : "none";
+  const showNav = lightboxPhotos.length > 1;
+  document.getElementById("lightboxPrev").style.display = showNav ? "" : "none";
+  document.getElementById("lightboxNext").style.display = showNav ? "" : "none";
+}
+
+function lightboxStep(delta){
+  if(lightboxPhotos.length === 0) return;
+  lightboxIndex = ((lightboxIndex + delta) % lightboxPhotos.length + lightboxPhotos.length) % lightboxPhotos.length;
+  showLightboxPhoto();
+}
+
+function closeLightbox(){
   document.getElementById("lightbox").classList.remove("open");
+  lightboxRowId = null;
+  lightboxPhotos = [];
+}
+
+async function deleteCurrentLightboxPhoto(){
+  if(!canVerify()) return;
+  const p = lightboxPhotos[lightboxIndex];
+  const rowId = lightboxRowId;
+  if(!p || !rowId) return;
+  if(!confirm("Delete this photo? This can't be undone.")) return;
+  try{
+    await deleteDoc(doc(db, "photoImages", p.id));
+  }catch(e){ console.error(e); }
+  data.photos[rowId] = (data.photos[rowId] || []).filter(x => x.id !== p.id);
+  delete imageCache[p.id];
+  document.getElementById("statusLine").textContent = "Saving…";
+  await saveData();
+  lightboxPhotos = (data.photos[rowId] || []).slice().sort((a,b) => b.ts - a.ts);
+  if(lightboxPhotos.length === 0){
+    closeLightbox();
+  }else{
+    lightboxIndex = Math.min(lightboxIndex, lightboxPhotos.length - 1);
+    showLightboxPhoto();
+  }
+  render();
+}
+
+document.getElementById("lightbox").addEventListener("click", closeLightbox);
+document.getElementById("lightboxInner").addEventListener("click", (e) => e.stopPropagation());
+document.getElementById("lightboxClose").addEventListener("click", closeLightbox);
+document.getElementById("lightboxPrev").addEventListener("click", () => lightboxStep(-1));
+document.getElementById("lightboxNext").addEventListener("click", () => lightboxStep(1));
+document.getElementById("lightboxDelete").addEventListener("click", deleteCurrentLightboxPhoto);
+document.addEventListener("keydown", (e) => {
+  if(!document.getElementById("lightbox").classList.contains("open")) return;
+  if(e.key === "Escape") closeLightbox();
+  else if(e.key === "ArrowLeft") lightboxStep(-1);
+  else if(e.key === "ArrowRight") lightboxStep(1);
 });
+
 
 // Add item modal
 const backdrop = document.getElementById("modalBackdrop");
@@ -1136,6 +1479,10 @@ document.getElementById("cancelAdd").addEventListener("click", () => backdrop.cl
 backdrop.addEventListener("click", (e) => { if(e.target === backdrop) backdrop.classList.remove("open"); });
 
 document.getElementById("saveAdd").addEventListener("click", async () => {
+  if(!currentUser){
+    alert("Please sign in as Shane, Isao, or Zoe first (top right).");
+    return;
+  }
   const location = document.getElementById("f-location").value.trim();
   const title = document.getElementById("f-title").value.trim();
   const description = document.getElementById("f-description").value.trim();
@@ -1144,11 +1491,14 @@ document.getElementById("saveAdd").addEventListener("click", async () => {
     alert("Please fill in at least Location and Title.");
     return;
   }
-  data.rows.push({id: uid(), location, title, description, priority});
+  const newId = uid();
+  data.rows.push({id: newId, location, title, description, priority});
+  if(!data.comments[newId]) data.comments[newId] = [];
+  data.comments[newId].push({author: currentUser, ts: Date.now(), text: "created this item", system: true});
   backdrop.classList.remove("open");
   document.getElementById("statusLine").textContent = "Saving…";
   await saveData();
-  render();
+  markRowRead(newId);
 });
 
 // Identity selector
