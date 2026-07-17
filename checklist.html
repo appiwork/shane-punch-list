@@ -732,6 +732,7 @@
       <option value="priority">Priority</option>
       <option value="title">Title (A–Z)</option>
       <option value="status">Status</option>
+      <option value="activity">Recent Activity</option>
     </select>
   </div>
 
@@ -966,6 +967,12 @@ function canVerify(){
 
 const PRIORITY_ORDER = {High:0, Medium:1, Low:2};
 
+function lastActivityTs(rowId){
+  const comments = data.comments[rowId] || [];
+  if(comments.length === 0) return 0;
+  return Math.max(...comments.map(c => c.ts));
+}
+
 function sortRows(rows, sortBy){
   const sorted = rows.slice();
   if(sortBy === "location"){
@@ -981,6 +988,8 @@ function sortRows(rows, sortBy){
       const scoreB = (sb.verified?2:0) + (sb.builderComplete?1:0);
       return scoreA - scoreB;
     });
+  }else if(sortBy === "activity"){
+    sorted.sort((a,b) => lastActivityTs(b.id) - lastActivityTs(a.id));
   }
   return sorted;
 }
